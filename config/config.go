@@ -12,11 +12,11 @@ type Config struct {
 	Environment      string // develop, staging, production
 	HttpPort         string
 	LogLevel         string
-	PostgresHost     string
-	PostgresPort     int
-	PostgresDatabase string
-	PostgresUser     string
-	PostgresPassword string
+	// PostgresHost     string
+	// PostgresPort     int
+	// PostgresDatabase string
+	// PostgresUser     string
+	// PostgresPassword string
 	JWTSigningKey    string
 	PostgresUrl      string
 }

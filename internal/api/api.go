@@ -7,12 +7,13 @@ import (
 	v1 "github.com/baxromumarov/cloud-storage/internal/api/handler/v1"
 	"github.com/baxromumarov/cloud-storage/internal/pkg/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 )
 
 type RouterOptions struct {
 	Log logger.Logger
 	Cfg *config.Config
-	// Db  *sqlx.DB
+	Db  *sqlx.DB
 }
 
 func New(opt *RouterOptions) *gin.Engine {
@@ -23,7 +24,7 @@ func New(opt *RouterOptions) *gin.Engine {
 	options := &v1.HandlerV1Options{
 		Log: opt.Log,
 		Cfg: opt.Cfg,
-		// Db:  opt.Db,
+		Db:  opt.Db,
 	}
 
 	handlerV1 := v1.New(options)
