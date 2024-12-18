@@ -18,7 +18,7 @@ import (
 func main() {
 	cfg := config.Load()
 	log := logger.New(cfg.LogLevel, "cloud-storage")
-	// postgres, err := db.InitPostgres(cfg)
+	// postgres, err := helper.InitPostgres(cfg)
 	// if err != nil {
 	// log.Fatal("error while connecting postgres: " + err.Error())
 	// }

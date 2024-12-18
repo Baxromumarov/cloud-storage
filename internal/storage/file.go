@@ -4,10 +4,12 @@ import (
 	"context"
 
 	"github.com/baxromumarov/cloud-storage/internal/pkg/logger"
+	"github.com/jmoiron/sqlx"
 )
 
 type File struct {
 	log logger.Logger
+	db  *sqlx.DB
 
 	Name        string                 `json:"name"`
 	Size        int64                  `json:"size"`
@@ -21,13 +23,15 @@ type File struct {
 	DeletedAt   string                 `json:"deleted_at"`
 }
 
-func NewFileRepo(log logger.Logger) FileRepo {
+func NewFileRepo(db *sqlx.DB, log logger.Logger) *File {
 	return &File{
 		log: log,
+		db:  db,
 	}
 }
 
+// Save file in postgres
 func (f *File) Create(ctx context.Context, file *File) error {
+
 	return nil
 }
-

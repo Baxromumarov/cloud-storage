@@ -2,16 +2,15 @@ package v1
 
 import (
 	"github.com/baxromumarov/cloud-storage/config"
-	"github.com/baxromumarov/cloud-storage/internal/db"
 	"github.com/baxromumarov/cloud-storage/internal/pkg/logger"
+	"github.com/baxromumarov/cloud-storage/internal/storage"
 	"github.com/jmoiron/sqlx"
-	// "github.com/jmoiron/sqlx"
 )
 
 type handlerV1 struct {
 	log             logger.Logger
 	cfg             *config.Config
-	storagePostgres db.PostgresI
+	storagePostgres storage.StorageI
 }
 
 type HandlerV1Options struct {
@@ -24,7 +23,7 @@ func New(options *HandlerV1Options) *handlerV1 {
 	return &handlerV1{
 		log:             options.Log,
 		cfg:             options.Cfg,
-		storagePostgres: db.NewStorage(options.Db, options.Log),
+		storagePostgres: storage.NewStorage(options.Db, options.Log),
 	}
 }
 
