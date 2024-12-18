@@ -1,26 +1,27 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/baxromumarov/cloud-storage/config"
 	"github.com/baxromumarov/cloud-storage/internal/api"
-	"github.com/baxromumarov/cloud-storage/internal/db"
 	"github.com/baxromumarov/cloud-storage/internal/pkg/logger"
+	"github.com/jmoiron/sqlx"
 )
 
 func main() {
 	cfg := config.Load()
 	log := logger.New(cfg.LogLevel, "cloud-storage")
-	postgres, err := db.InitPostgres(cfg)
-	if err != nil {
-		log.Fatal("error while connecting postgres: " + err.Error())
-	}
-
+	// postgres, err := db.InitPostgres(cfg)
+	// if err != nil {
+	// log.Fatal("error while connecting postgres: " + err.Error())
+	// }
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
@@ -28,12 +29,33 @@ func main() {
 	srv := api.New(&api.RouterOptions{
 		Log: log,
 		Cfg: cfg,
-		Db:  postgres,
+		Db:  &sqlx.DB{},
 	})
 
-	fmt.Println("Starting server on :8080")
-	if err := srv.Run(":" + cfg.HttpPort); err != nil && err != http.ErrServerClosed {
-		fmt.Printf("Server error: %s\n", err)
+	httpServer := &http.Server{
+		Addr:    ":" + cfg.HttpPort,
+		Handler: srv,
 	}
 
+	go func() {
+		fmt.Println("Starting server on :8080")
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			fmt.Printf("Server error: %s\n", err)
+		}
+	}()
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt)
+
+	<-signalChan
+	fmt.Println("Received shutdown signal, shutting down gracefully...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := httpServer.Shutdown(ctx); err != nil {
+		fmt.Printf("Server shutdown failed: %v\n", err)
+	} else {
+		fmt.Println("Server gracefully stopped")
+	}
 }

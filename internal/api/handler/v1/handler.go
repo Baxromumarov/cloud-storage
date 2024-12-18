@@ -7,10 +7,11 @@ import (
 	"github.com/jmoiron/sqlx"
 	// "github.com/jmoiron/sqlx"
 )
+
 type handlerV1 struct {
 	log             logger.Logger
 	cfg             *config.Config
-	storagePostgres db.StorageI
+	storagePostgres db.PostgresI
 }
 
 type HandlerV1Options struct {

@@ -7,7 +7,7 @@ import (
 
 // register all repositories
 
-type StorageI interface {
+type PostgresI interface {
 	// Company() CompanyRepo
 
 }
@@ -17,7 +17,7 @@ type storagePg struct {
 
 }
 
-func NewStorage(db *sqlx.DB, log logger.Logger) StorageI {
+func NewStorage(db *sqlx.DB, log logger.Logger) PostgresI {
 	return &storagePg{
 		// company: NewCompanyRepo(db, log),
 	}

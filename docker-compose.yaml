@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cloud_storage
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - company-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cloud_storage"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  company-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/cloud_storage
+    depends_on:
+      - db
+    networks:
+      - company-network
+
+networks:
+  company-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
