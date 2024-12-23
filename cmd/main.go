@@ -22,7 +22,9 @@ func main() {
 	// if err != nil {
 	// log.Fatal("error while connecting postgres: " + err.Error())
 	// }
-
+	err := log.Error("Error while inserting file into database", logger.Error( fmt.Errorf("error-12")))
+	fmt.Println(err)
+	return
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 

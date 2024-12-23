@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -29,8 +30,14 @@ type Field = zapcore.Field
 var (
 	// Int ..
 	Int = zap.Int
+	// Float64 ...
+	Float64 = zap.Float64
+	// Duration ...
+	Duration = zap.Duration
+
 	// String ...
 	String = zap.String
+
 	// Error ...
 	Error = zap.Error
 	// Bool ...
@@ -45,7 +52,7 @@ type Logger interface {
 	Debug(msg string, fields ...Field)
 	Info(msg string, fields ...Field)
 	Warn(msg string, fields ...Field)
-	Error(msg string, fields ...Field)
+	Error(msg string, fields ...Field) error
 	Fatal(msg string, fields ...Field)
 }
 
@@ -86,8 +93,10 @@ func (l *loggerImpl) Warn(msg string, fields ...Field) {
 	l.zap.Warn(msg, fields...)
 }
 
-func (l *loggerImpl) Error(msg string, fields ...Field) {
+func (l *loggerImpl) Error(msg string, fields ...Field) error {
 	l.zap.Error(msg, fields...)
+	fmt.Println("type: ", fields[0].Type)
+	return fmt.Errorf(msg, fields[0].Interface)
 }
 
 func (l *loggerImpl) Fatal(msg string, fields ...Field) {

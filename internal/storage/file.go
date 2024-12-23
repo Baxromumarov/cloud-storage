@@ -32,6 +32,6 @@ func NewFileRepo(db *sqlx.DB, log logger.Logger) *File {
 
 // Save file in postgres
 func (f *File) Create(ctx context.Context, file *File) error {
-
+	
 	return nil
 }

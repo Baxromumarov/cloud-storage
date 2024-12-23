@@ -5,7 +5,6 @@ import (
 
 	"github.com/baxromumarov/cloud-storage/config"
 	v1 "github.com/baxromumarov/cloud-storage/internal/api/handler/v1"
-	"github.com/baxromumarov/cloud-storage/internal/api/middleware"
 	"github.com/baxromumarov/cloud-storage/internal/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -30,13 +29,19 @@ func New(opt *RouterOptions) *gin.Engine {
 
 	handlerV1 := v1.New(options)
 	v1Group := router.Group("/api/v1")
-	v1Group.Use(middleware.Authentication(opt.Cfg))
+	// v1Group.Use(middleware.Authentication(opt.Cfg))
 
 	v1Group.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
+
+	// files
+	{
+		// v1Group.GET("/files", handlerV1.GetFiles)
+		v1Group.POST("/files", handlerV1.UploadFile)
+	}
 
 	fmt.Println("V1Group: ", v1Group, handlerV1)
 
